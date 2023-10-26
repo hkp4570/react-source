@@ -1,30 +1,25 @@
-import React from 'react';
-const element = <h1 style={{color: 'red'}} title={'h1'}>element</h1>
+import React from '../react';
+
+const element = <div><h1 title={'h1'}>element</h1><a href="">测试连接</a></div>
 console.log(element, 'element');
-// const element = {
-//     type: 'h1',
-//     props: {
-//         style:{color:'red'},
-//         title:'h1',
-//         children: 'element'
-//     }
-// }
 
 const container = document.getElementById('root');
 // ReactDOM.render(element, container);
 
 // ReactDOM.render方法
-const node = document.createElement(element.type);
-node['title'] = element.props.title;
-for (const key in element.props.style) {
-    node['style'][key] = element.props.style[key];
-}
+// const node = document.createElement(element.type);
+// node['title'] = element.props.title;
+// for (const key in element.props.style) {
+//     node['style'][key] = element.props.style[key];
+// }
+//
+// const text = document.createTextNode('');
+// text['nodeValue'] = element.props.children;
+//
+// node.appendChild(text);
 
-const text = document.createTextNode('');
-text['nodeValue'] = element.props.children;
+// container.appendChild(node);
 
-node.appendChild(text);
-
-container.appendChild(node);
+React.render(element, container);
 
 
