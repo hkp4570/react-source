@@ -1,6 +1,8 @@
 import React from '../react';
 
-const element = <div><h1 title={'h1'}>element</h1><a href="">测试连接</a></div>
+const element = <section>
+    <div><h1 title={'h1'}><span>hello</span></h1><a href="">测试连接</a></div>
+</section>
 console.log(element, 'element');
 
 const container = document.getElementById('root');

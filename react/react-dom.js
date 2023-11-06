@@ -14,6 +14,7 @@
 // }
 
 
+// 流程：render(初始化设置) -> requestIdleCallback -> workLoop -> nextUnitOfWork -> performUnitOfWork ->
 export const createDom = (fiber) => {
     const dom = fiber.type === 'TEXT_ELEMENT' ? document.createTextNode('') : document.createElement(fiber.type);
     const isProperty = key => key !== 'children';
@@ -30,27 +31,70 @@ export const createDom = (fiber) => {
 let nextUnitOfWork = null;
 
 // 首先默认跟节点为下一个工作单元
-export const render = (element, container) =>{
+export const render = (element, container) => {
     nextUnitOfWork = {
         dom: container,
-        props:{
+        props: {
             children: [element]
         }
     }
 }
 
+// 执行工作单元
 const performUnitOfWork = (fiber) => {
+    // console.log(fiber, 'fiber');
+    if (!fiber.dom) {
+        fiber.dom = createDom(fiber);
+    }
+    if (fiber.parent) {
+        fiber.parent.dom.appendChild(fiber.dom);
+    }
 
+    const elements = fiber.props.children;
+    // 索引
+    let index = 0;
+    // 上一个兄弟节点
+    let prevSibling = null;
+    while (index < elements.length) {
+        const element = elements[index];
+        const newFiber = {
+            type: element.type,
+            props: element.props,
+            parent: fiber,
+            dom: null,
+        }
+        // 第一个子节点
+        if (index === 0) {
+            fiber.child = newFiber;
+        } else if (element) {
+            prevSibling.sibling = newFiber;
+        }
+        prevSibling = newFiber;
+        index++;
+    }
+
+    if (fiber.child) {
+        return fiber.child;
+    }
+
+    let nextFiber = fiber;
+    while (nextFiber) {
+        if (nextFiber.sibling) {
+            return nextFiber.sibling;
+        }
+        console.log(nextFiber, 'nextFiber');
+        nextFiber = nextFiber.parent;
+    }
 }
 
 const workLoop = (deadline) => {
     // 停止标识
     let shouldYield = false;
-    while (nextUnitOfWork && !shouldYield){
+    while (nextUnitOfWork && !shouldYield) {
         nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
         shouldYield = deadline.timeRemaining() < 1;
     }
-
+    requestIdleCallback(workLoop);
 }
 
 requestIdleCallback(workLoop);
