@@ -11,3 +11,4 @@
 4. Fibers Node
    - workLoop 深度优先遍历
 5. Render and Commit 阶段
+6. reconcile 协调

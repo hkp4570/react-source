@@ -30,6 +30,7 @@ export const createDom = (fiber) => {
 // 下一个工作单元
 let nextUnitOfWork = null;
 // 内存中的树
+// 内存中的fiber和要渲染的fiber做关联
 let wipRoot = null;
 
 // 首先默认跟节点为下一个工作单元
