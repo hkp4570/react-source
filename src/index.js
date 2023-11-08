@@ -22,22 +22,38 @@
 // node.appendChild(text);
 // container.appendChild(node);
 
+// 协调器
+// import React from '../react';
+//
+// const container = document.getElementById('root');
+//
+// const updateValue = (e) => {
+//   rerender(e.target.value);
+// };
+//
+// const rerender = (value) => {
+//   const element = (
+//     <div>
+//       <input onInput={updateValue} value={value} />
+//       <h2>Hello {value}</h2>
+//     </div>
+//   );
+//   React.render(element, container);
+// };
+//
+// rerender('World');
+
+// 函数组件
 import React from '../react';
 
-const container = document.getElementById('root');
+function App(props) {
+  return <h1>H1,{props.name}!</h1>;
+}
 
-const updateValue = (e) => {
-  rerender(e.target.value);
-};
+const element = <App name="foo"></App>;
+//  看一下两个的区别
+// console.log(element, 'element');
+// const element1 = <h1>hi, react</h1>
+// console.log(element1, 'element1');
 
-const rerender = (value) => {
-  const element = (
-    <div>
-      <input onInput={updateValue} value={value} />
-      <h2>Hello {value}</h2>
-    </div>
-  );
-  React.render(element, container);
-};
-
-rerender('World');
+React.render(element, document.getElementById('root'));

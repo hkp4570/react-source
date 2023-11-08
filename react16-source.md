@@ -12,3 +12,6 @@
    - workLoop 深度优先遍历
 5. Render and Commit 阶段
 6. reconcile 协调
+7. Function Components
+   - 普通的jsx和函数组件的区别（type值不一致，导致无法根据type创建DOM并且把字元素append进去，需要执行函数，props作为参数；函数组件内的props属性中children是没有的）
+8. hooks

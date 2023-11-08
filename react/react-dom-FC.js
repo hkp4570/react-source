@@ -1,3 +1,4 @@
+// 函数组件实现
 // export const render = (element, container) => {
 //     const dom = element.type === 'TEXT_ELEMENT' ? document.createTextNode('') : document.createElement(element.type);
 //     const isProperty = key => key !== 'children';
