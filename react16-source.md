@@ -15,3 +15,4 @@
 7. Function Components
    - 普通的jsx和函数组件的区别（type值不一致，导致无法根据type创建DOM并且把字元素append进去，需要执行函数，props作为参数；函数组件内的props属性中children是没有的）
 8. hooks
+   - 自己先实现useState，目前存在的问题，当更改状态的时候，页面中会把函数组件重新插入一遍
