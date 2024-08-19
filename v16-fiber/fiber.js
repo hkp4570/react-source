@@ -4,58 +4,62 @@ let isPerformingTask = false; // 表示当前是否有任务正在执行
 const channel = new MessageChannel(); // 创建一个新的消息通道
 const port = channel.port2; // 获取通道第二个端口
 
-function task1(){
-    console.log('performing task 1')
+/**
+ * 调度有延时的任务
+ * @param task 任务
+ * @param delay 延时时间（毫秒）
+ */
+function scheduleDelayedTask(task, delay) {
+  const expirationTime = performance.now() + delay;
+  tasks.push({ task, expirationTime }); // 将任务和过期时间添加到任务队列
+  if (!isPerformingTask) {
+    isPerformingTask = true; // 标识任务正在执行
+    port.postMessage(null); // 向通道第二个端口发送空消息
+  }
 }
-
-function task2(){
-    console.log('performing task 2')
-}
-
-function task3(){
-    console.log('performing task 3')
-}
-
 
 /**
- * 调度任务
- * @param task 任务
- * @param expirationTime 过期时间
+ * 执行有延时的任务
+ * @param currentTime 当前时间
  */
-function scheduleTask(task, expirationTime){
-    tasks.push({task, expirationTime}); // 将任务和过期时间添加到任务队列
-    if(!isPerformingTask){
-        isPerformingTask = true; // 标识任务正在执行
-        port.postMessage(null); // 向通道第二个端口发送空消息
+function performDelayedTask(currentTime) {
+  const frameTime = 1000 / 60;
+  while (tasks.length > 0 && performance.now() - currentTime < frameTime) {
+    const { task, expirationTime } = tasks.shift();
+    if (performance.now() >= expirationTime) {
+      // 任务没有过期
+      task();
+    } else {
+      // 任务过期
+      tasks.push({ task, expirationTime });
     }
+  }
+
+  if (tasks.length) {
+    requestAnimationFrame(() => performDelayedTask(performance.now()));
+  } else {
+    isPerformingTask = false;
+  }
 }
 
-function performTask(currentTime) {
-    const frameTime = 1000/60;
-    // ？？？ performance.now() - currentTime一直大于16.67的
-    while (tasks.length > 0 && performance.now() - currentTime < frameTime){
-        const {task, expiration} = tasks.shift();
-        if(performance.now() >= expiration){
-            // 任务没有过期
-            task();
-        }else {
-            // 任务过期
-            tasks.push({task, expiration});
-        }
-    }
+// 当通道第一个端口接受到消息时，开始执行有延时的任务
+channel.port1.onmessage = () => {
+  requestAnimationFrame(() => performDelayedTask(performance.now()));
+};
 
-    if(tasks.length){
-        requestAnimationFrame(performTask);
-    }else{
-        isPerformingTask = false;
-    }
+function task1(){
+  console.log('task1')
+}
+function task2(){
+  console.log('task2')
+}
+function task3(){
+  console.log('task3')
 }
 
-// 当通道第一个端口接受到消息时，开始执行任务
-channel.port1.onmessage = () => requestAnimationFrame(performTask);
-
-scheduleTask(task1, performance.now() + 1000);
-scheduleTask(task2, performance.now());
-scheduleTask(task3, performance.now() + 3000);
+// 调度示例有延时的任务
+scheduleDelayedTask(task1, 3000);
+scheduleDelayedTask(task2, 2000);
+scheduleDelayedTask(task3, 1000);
 
 console.log('同步任务执行');
